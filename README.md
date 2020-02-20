@@ -11,6 +11,10 @@ do we really want to?
 Why not make it really easy?   And it should work- as soon as we export our bash function or 
 update our alias in `~/.bash_aliases`
 
+##### Installation: 
+Install `pargs` by downloading the single script, making it executable and putting it in `~/bin`    
+The script should work on any Linux with bash installed.
+
 
     USAGE: pargs [options]... COMMAND [command options and arguments]... 
     	pargs reads each line of STDIN as an argument to pass to COMMAND
