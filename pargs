@@ -1,1 +1,146 @@
-/home/anliot/bin/pargs
+#!/usr/bin/perl
+# I use 'find' a whole lot, and I need a easy way to pass result to commands.
+# I also have about 15-30 favorite bash functions that I don't want to refactor into individual scripts.
+# it's possible to export functions from the shell, and then use them in xargs, but this is slightly clunky
+# it's possible to use env_parallel with normal, unexported functions but it's not 100% reliable.
+# this perl script should simplify eveything!
+
+
+#todo, each argument in the entire @ARGV could be preceeded by a --no-quote-next-argument that means this program will pass it unquoted, 
+
+my $basharglimit; # arbitrary, but the problems with ENV size (in a completely different bash script using env_parallel) is so  horrible so even though we could probably do 20_000 at once, we keep this low.
+$basharglimit = 240; # was 63
+
+sub help { 
+my $comment= <<'HER'
+here is some code borrowed from a playlist script to calculate the maximum arguments you can use, by requesting the maximum ENV from bash.
+#!/bin/bash 
+max=$(getconf ARG_MAX)
+minus=$(set|wc -c)
+(( max-=minus ))
+if test $# -ne 0 
+	then ray=( "$@" ) 
+else ray=( * )
+fi
+# l is command string
+l=$(echo "${out[@]}" |wc -c)
+(( l+=260 ))
+if [[ $l -gt  $max ]]; then echo yup;break; fi
+echo $l;
+done
+HER
+;
+print <<HERE
+USAGE: pargs [options]... COMMAND [command options and arguments]... 
+	pargs reads each line of STDIN as an argument to pass to COMMAND
+
+( The first non-option is always read as the COMMAND then it's args )
+pargs calls COMMAND with the intial arguments, followed by the arguments 
+from STDIN. 
+
+Here's a typical xargs example:
+ \$ echo x|xargs echo
+Which opens xargs with the output from the first echo, and calls the 
+second echo with a single argument 'x'.
+
+Here's a typical pargs example:
+ \$ echo type|pargs type 
+Which opens pargs with the output from echo, and calls the 'type' 
+bash built-in with a single argument 'type'. 
+
+Unlike xargs, the command arguments to 'pargs' can be an normal command, 
+bash function or alias.
+
+This program calls bash, tells bash to source ~/.bash_aliases, then always
+calls your command, function, or alias.  Exported bash functions work on
+exported bash variables, but only if they've been exported.
+
+	-1 		same as --max-args=1 in xargs or GNU parallel.  
+			pargs will read all input lines, but calls command
+			repetitively with a single argument, instead of 
+			multiple arguments.
+
+	-i 		The program will ignore errors.  Since $basharglimit lines 
+			are passed as args at once, this is only useful if
+			your program ignores errors as well.
+
+	--help		Prints this message.
+
+Four examples: 
+ pargs < url_list.txt youtube-dl --get-title	# each line is a url 
+ find -type f -regex '.*mp4'|pargs -1 ffprobe	# ffprobe needs single arg
+ find -type f -printf "\$PWD/%P\\n"|grep -aiE '(\\.mp4|\\.webm)\$'|pargs ll	# uses the ll alias for ls to list all media files with full path 
+ dope () { ll "\$@";}; export -f dope; find -regex .*webm|pargs dope    # uses the ll alias, but inside a bash function that was exported from the current shell.
+HERE
+;
+
+exit;
+}
+use feature say;
+use strict;
+use warnings;
+
+sub quoteforshell {  #adds single quotes i guess it could work like bash's printf %q
+# doesn't relly return an array, just a single string
+# so you pass multiarguments, and it quotes each one, separated by a space.
+#s///gr is return sub, but leave orig untouched
+  return join ' ', map  
+      "'" . s/'/'\\''/gr . "'", @_;
+}
+
+my $ignore_err;  # program doesn't stop on error if not unset
+my @ARGUMENTS=@ARGV; # everything not an argument to this program
+
+
+while ( my $first=shift @ARGUMENTS) {
+	# last means no more args to this program
+	last unless $first =~ /^(-[i1]{1,2}|--help)$/;  # should match -1 -i or -i1 but also matches -ii and -11 (accidental) 
+	help() if $first eq '--help'; 
+	($ignore_err = 1),next  if $first eq '-i';
+	($basharglimit = 1),next if $first eq '-1';
+	if ( ($first eq '-i1') or ($first eq '-1i') ) {
+		$basharglimit = 1;
+		$ignore_err = 1;
+		next;
+	}
+	die 'unexpected arg';
+} continue {
+	shift @ARGV;  # argument is to this program so get rid of it
+}
+
+#use Data::Dump; #dd $first;exit;
+
+@ARGUMENTS= @ARGV;
+print  (STDERR 'error! 0 arguments means nothing to do.'."\n"), exit 1 if scalar( @ARGUMENTS) == 0;
+
+my $commandthing=$ARGUMENTS[0].' ';  # problem was that alias didn't work if quoted, 
+# but we quote every other argument
+$commandthing.=quoteforshell($_).' ' for (@ARGUMENTS[ 1..$#ARGUMENTS]);  # don't quote first argument, it may be alias.
+
+while () { 
+	my @args=();
+	while (my $line=<STDIN>) {
+		chomp $line;
+		next unless length ( $line); # skip if string is ''
+		push @args, $line;
+		last if @args == $basharglimit;  # true if we've read in $limit arguments(lines)
+	}
+	exit 0 if $#args == -1; # no more to read from STDIN
+	my $bashsuff='';   # will contain the variable part of the -c string
+
+	for (my $i =0;$i <= $#args; $i++) {
+		 $bashsuff.=' '.quoteforshell($args[$i]);
+	}
+
+	my $dotc =  "test -e ~/.bash_aliases && . ~/.bash_aliases;shopt -s expand_aliases;exec 0</dev/tty\n$commandthing$bashsuff";
+	my $syserr = system 'bash',"-c", $dotc;  # works, unquote the aliases
+
+	print(STDERR  "\nInterrupted, giving up\n"),exit $? if ($? & 127) == 2; # means control+c, exit under all circumstances #https://stackoverflow.com/a/47138000/819596
+	if ($syserr && ! $ignore_err) {
+		$syserr = $syserr >>8; # numeric error to bash error number
+		$!=$syserr;  #actually works donno why
+		#say STDERR "todo: maybe show how many bash invokations were successful?";
+		print( STDERR  "pwhat: process returned '$!'\n");
+		exit $syserr;
+	}
+}
