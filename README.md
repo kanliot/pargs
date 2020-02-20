@@ -8,7 +8,9 @@ How to Pipe arguments to a bash script.
 We, can always call bash code from xargs like [this,](https://stackoverflow.com/questions/11003418/calling-shell-functions-with-xargs) But
 do we really want to?
 
-Why not make it really easy?   And it works with any new bash function- as soon as we export our bash function or 
+Why not make it really easy?    
+`$ cat lines_of_data | pargs some_bash_function`    
+And it works with any new bash function- as soon as we export our bash function or 
 update our alias in `~/.bash_aliases`
 
 ##### Installation: 
