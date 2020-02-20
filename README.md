@@ -3,12 +3,12 @@ How to Pipe arguments to a bash script.
 ...or bash aliases or bash functions.
 
 #### $ pargs
-`pargs` is a drop in script for people who want to pipe lines of arguments to bash code, in the format of a simple to use command.
+`pargs` is a script for people who want to pipe lines of arguments to bash functions or aliases.
 
-We, can always call bash code like [this,](https://stackoverflow.com/questions/11003418/calling-shell-functions-with-xargs) But
+We, can always call bash code from xargs like [this,](https://stackoverflow.com/questions/11003418/calling-shell-functions-with-xargs) But
 do we really want to?
 
-Why not make it really easy?   And it should work- as soon as we export our bash function or 
+Why not make it really easy?   And it works with any new bash function- as soon as we export our bash function or 
 update our alias in `~/.bash_aliases`
 
 ##### Installation: 
