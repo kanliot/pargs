@@ -5,7 +5,7 @@ How to Pipe arguments to a bash script.
 #### $ pargs
 `pargs` is a script for people who want to pipe lines of arguments to bash functions or aliases.
 
-We, can always call bash code from xargs like [this,](https://stackoverflow.com/questions/11003418/calling-shell-functions-with-xargs) But
+If we want the hard way, we can always call bash code from xargs like [this,](https://stackoverflow.com/questions/11003418/calling-shell-functions-with-xargs) But
 do we really want to?
 
 Why not make it really easy?    
