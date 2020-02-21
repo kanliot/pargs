@@ -5,15 +5,86 @@
 # it's possible to use env_parallel with normal, unexported functions but it's not 100% reliable.
 # this perl script should simplify eveything!
 
+use feature say;
+use strict;
+use warnings;
 
 #todo, each argument in the entire @ARGV could be preceeded by a --no-quote-next-argument that means this program will pass it unquoted, 
 
 my $basharglimit; # arbitrary, but the problems with ENV size (in a completely different bash script using env_parallel) is so  horrible so even though we could probably do 20_000 at once, we keep this low.
 $basharglimit = 240; # was 63
 
+sub quoteforshell {  #adds single quotes i guess it could work like bash's printf %q
+# doesn't relly return an array, just a single string
+# so you pass multiarguments, and it quotes each one, separated by a space.
+#s///gr is return sub, but leave orig untouched
+  return join ' ', map  
+      "'" . s/'/'\\''/gr . "'", @_;
+}
+
+my $ignore_err;  # program doesn't stop on error if not unset
+my @ARGUMENTS=@ARGV; # everything not an argument to this program
+
+
+while ( my $first=shift @ARGUMENTS) {
+	# last means no more args to this program
+	last unless $first =~ /^(-[i1]{1,2}|--help)$/;  # should match -1 -i or -i1 but also matches -ii and -11 (accidental) 
+	help() if $first eq '--help'; 
+	($ignore_err = 1),next  if $first eq '-i';
+	($basharglimit = 1),next if $first eq '-1';
+	if ( ($first eq '-i1') or ($first eq '-1i') ) {
+		$basharglimit = 1;
+		$ignore_err = 1;
+		next;
+	}
+	die 'unexpected arg';
+} continue {
+	shift @ARGV;  # argument is to this program so get rid of it
+}
+
+#use Data::Dump; #dd $first;exit;
+
+@ARGUMENTS= @ARGV;
+print  (STDERR 'error! 0 arguments means nothing to do.  did you mean --help?'."\n"), exit 1 if scalar( @ARGUMENTS) == 0;
+
+my $commandthing=$ARGUMENTS[0].' ';  # problem was that alias didn't work if quoted, 
+# but we quote every other argument
+$commandthing.=quoteforshell($_).' ' for (@ARGUMENTS[ 1..$#ARGUMENTS]);  # don't quote first argument, it may be alias.
+
+while () { 
+	my @args=();
+	while (my $line=<STDIN>) {
+		chomp $line;
+		next unless length ( $line); # skip if string is ''
+		push @args, $line;
+		last if @args == $basharglimit;  # true if we've read in $limit arguments(lines)
+	}
+	exit 0 if $#args == -1; # no more to read from STDIN
+	my $bashsuff='';   # will contain the variable part of the -c string
+
+	for (my $i =0;$i <= $#args; $i++) {
+		 $bashsuff.=' '.quoteforshell($args[$i]);
+	}
+
+	my $dotc =  "test -e ~/.bash_aliases && . ~/.bash_aliases;shopt -s expand_aliases;exec 0</dev/tty\n$commandthing$bashsuff";
+	my $syserr = system 'bash',"-c", $dotc;  # works, unquote the aliases
+
+	print(STDERR  "\nInterrupted, giving up\n"),exit $? if ($? & 127) == 2; # means control+c, exit under all circumstances #https://stackoverflow.com/a/47138000/819596
+	if ($syserr && ! $ignore_err) {
+		$syserr = $syserr >>8; # numeric error to bash error number
+		$!=$syserr;  #actually works donno why
+		#say STDERR "todo: maybe show how many bash invokations were successful?";
+		print( STDERR  "pwhat: process returned '$!'\n");
+		exit $syserr;
+	}
+}
+
+exit 0;  
+
 sub help { 
 my $comment= <<'HER'
 here is some code borrowed from a playlist script to calculate the maximum arguments you can use, by requesting the maximum ENV from bash.
+it's actually two different partial scripts so shouldn't run as is
 #!/bin/bash 
 max=$(getconf ARG_MAX)
 minus=$(set|wc -c)
@@ -75,72 +146,4 @@ HERE
 ;
 
 exit;
-}
-use feature say;
-use strict;
-use warnings;
-
-sub quoteforshell {  #adds single quotes i guess it could work like bash's printf %q
-# doesn't relly return an array, just a single string
-# so you pass multiarguments, and it quotes each one, separated by a space.
-#s///gr is return sub, but leave orig untouched
-  return join ' ', map  
-      "'" . s/'/'\\''/gr . "'", @_;
-}
-
-my $ignore_err;  # program doesn't stop on error if not unset
-my @ARGUMENTS=@ARGV; # everything not an argument to this program
-
-
-while ( my $first=shift @ARGUMENTS) {
-	# last means no more args to this program
-	last unless $first =~ /^(-[i1]{1,2}|--help)$/;  # should match -1 -i or -i1 but also matches -ii and -11 (accidental) 
-	help() if $first eq '--help'; 
-	($ignore_err = 1),next  if $first eq '-i';
-	($basharglimit = 1),next if $first eq '-1';
-	if ( ($first eq '-i1') or ($first eq '-1i') ) {
-		$basharglimit = 1;
-		$ignore_err = 1;
-		next;
-	}
-	die 'unexpected arg';
-} continue {
-	shift @ARGV;  # argument is to this program so get rid of it
-}
-
-#use Data::Dump; #dd $first;exit;
-
-@ARGUMENTS= @ARGV;
-print  (STDERR 'error! 0 arguments means nothing to do.'."\n"), exit 1 if scalar( @ARGUMENTS) == 0;
-
-my $commandthing=$ARGUMENTS[0].' ';  # problem was that alias didn't work if quoted, 
-# but we quote every other argument
-$commandthing.=quoteforshell($_).' ' for (@ARGUMENTS[ 1..$#ARGUMENTS]);  # don't quote first argument, it may be alias.
-
-while () { 
-	my @args=();
-	while (my $line=<STDIN>) {
-		chomp $line;
-		next unless length ( $line); # skip if string is ''
-		push @args, $line;
-		last if @args == $basharglimit;  # true if we've read in $limit arguments(lines)
-	}
-	exit 0 if $#args == -1; # no more to read from STDIN
-	my $bashsuff='';   # will contain the variable part of the -c string
-
-	for (my $i =0;$i <= $#args; $i++) {
-		 $bashsuff.=' '.quoteforshell($args[$i]);
-	}
-
-	my $dotc =  "test -e ~/.bash_aliases && . ~/.bash_aliases;shopt -s expand_aliases;exec 0</dev/tty\n$commandthing$bashsuff";
-	my $syserr = system 'bash',"-c", $dotc;  # works, unquote the aliases
-
-	print(STDERR  "\nInterrupted, giving up\n"),exit $? if ($? & 127) == 2; # means control+c, exit under all circumstances #https://stackoverflow.com/a/47138000/819596
-	if ($syserr && ! $ignore_err) {
-		$syserr = $syserr >>8; # numeric error to bash error number
-		$!=$syserr;  #actually works donno why
-		#say STDERR "todo: maybe show how many bash invokations were successful?";
-		print( STDERR  "pwhat: process returned '$!'\n");
-		exit $syserr;
-	}
 }
