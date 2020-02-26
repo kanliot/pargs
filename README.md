@@ -54,7 +54,7 @@ The script should work on any Linux with bash installed.
     
     	--help		Prints this message.
     
-#### Five examples: 
+#### Examples: 
     
 ##### Each line is a url:
      pargs < url_list.txt youtube-dl --get-title	
