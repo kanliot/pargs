@@ -53,7 +53,7 @@ The script should work on any Linux with bash installed.
     
     	--help		Prints this message.
     
-#### Four examples: 
+#### Five examples: 
     
 ##### Each line is a url:
      pargs < url_list.txt youtube-dl --get-title	
@@ -63,3 +63,5 @@ The script should work on any Linux with bash installed.
      find -type f -printf "$PWD/%P\n"|grep -aiE '(\.mp4|\.webm)$'|pargs ll
 ##### Use the ll alias, but inside a bash function that was exported from the current shell:
      dope () { ll "$@";}; export -f dope; find -regex .*webm|pargs dope
+##### unicode
+echo HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm |pargs diff -s HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm 
