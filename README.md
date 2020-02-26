@@ -71,4 +71,5 @@ The script should work on any Linux with bash installed.
 
 
 Bugs: `pargs sudo customthing` (for functions and scripts in ~/bin) will not work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
-Blank lines are currently ignored.  Because most likely lists of "" "" "" is not what is desired.
+Blank lines are currently ignored.  Because most likely lists of "" "" "" is not what is desired.    
+`pargs echo '$variable'` will not work since $variable will be single quoted for the echo command. 
