@@ -69,5 +69,5 @@ The script should work on any Linux with bash installed.
      mlocate -ir the.two.towers|grep -iE 'mp4|mkv'|pwhat -i1 2>&1 ffprobe |perl -ne 'print if /Stream|Input|Duration/'
 
 
-Bugs: sudo doesn't work.    
+Bugs: sudo probably won't work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root    
 also, blank lines are ignored.  Because most likely lists of "" "" "" is not what is desired.
