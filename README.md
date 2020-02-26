@@ -69,6 +69,7 @@ The script should work on any Linux with bash installed.
 ##### use the output of `locate` to show an abbreviated version of video metadata
      mlocate -ir the.two.towers|grep -iE 'mp4|mkv'|pwhat -i1 2>&1 ffprobe |perl -ne 'print if /Stream|Input|Duration/'
 
+As mentioned above, pargs always operates like `xargs -d'\n'`. pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.
 
 Bugs: `pargs sudo customthing` (for functions and scripts in ~/bin) will not work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
 Blank lines are currently ignored.  Because most likely lists of "" "" "" is not what is desired.    
