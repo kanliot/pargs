@@ -1,4 +1,5 @@
-# pargs
+How to Pipe arguments to a bash script.
+...or bash aliases or bash functions.# pargs
 How to Pipe arguments to a bash script.    
 ...or bash aliases or bash functions.
 
@@ -69,5 +70,5 @@ The script should work on any Linux with bash installed.
      mlocate -ir the.two.towers|grep -iE 'mp4|mkv'|pwhat -i1 2>&1 ffprobe |perl -ne 'print if /Stream|Input|Duration/'
 
 
-Bugs: `sudo customthing` probably won't work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
+Bugs: `pargs sudo customthing` (for functions and scripts in ~/bin) will not work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
 Blank lines are currently ignored.  Because most likely lists of "" "" "" is not what is desired.
