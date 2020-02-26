@@ -5,6 +5,7 @@
 # it's possible to use env_parallel with normal, unexported functions but it's not 100% reliable.
 # this perl script should simplify eveything!
 
+# calling sudo currently isn't working
 use feature say;
 use strict;
 use warnings;
@@ -53,7 +54,8 @@ $commandthing.=quoteforshell($_).' ' for (@ARGUMENTS[ 1..$#ARGUMENTS]);  # don't
 
 while () { 
 	my @args=();
-	while (my $line=<STDIN>) {
+	my $line;
+	while ($line=<STDIN>) {
 		chomp $line;
 		next unless length ( $line); # skip if string is ''
 		push @args, $line;
@@ -77,6 +79,7 @@ while () {
 		print( STDERR  "pwhat: process returned '$!'\n");
 		exit $syserr;
 	}
+	exit unless defined $line; # subtle non-bug.  when STDIN was keyboard, ctrl-d wouldn't quite terminate input the first time.
 }
 
 exit 0;  

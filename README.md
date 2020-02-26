@@ -64,4 +64,10 @@ The script should work on any Linux with bash installed.
 ##### Use the ll alias, but inside a bash function that was exported from the current shell:
      dope () { ll "$@";}; export -f dope; find -regex .*webm|pargs dope
 ##### unicode
-echo HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm |pargs diff -s HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm 
+     echo HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm |pargs diff -s HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm 
+##### use the output of `locate` to show an abbreviated version of video metadata
+     mlocate -ir the.two.towers|grep -iE 'mp4|mkv'|pwhat -i1 2>&1 ffprobe |perl -ne 'print if /Stream|Input|Duration/'
+
+
+Bugs: sudo doesn't work.    
+also, blank lines are ignored.  Because most likely lists of "" "" "" is not what is desired.
