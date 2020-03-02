@@ -68,10 +68,16 @@ The script should work on any Linux with bash installed.
      echo HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm |pargs diff -s HON\ _\ หมาโหด\ ดุด้วย\ \!\!\!\!\ HPR\ GAMER\ Replay\ \[\ Gemini\ \]\ \[zStN\]Koomanp\ 👌-uh6DJ-0h-i8.webm 
 ##### use the output of `locate` to show an abbreviated version of video metadata
      mlocate -ir the.two.towers|grep -iE 'mp4|mkv'|pwhat -i1 2>&1 ffprobe |perl -ne 'print if /Stream|Input|Duration/'
+#### use a youtube playlist to move every file with the youtube ID to the current directory
+     fn () { find 2>/dev/null -type f -printf "$(pwd)/%P\n"|grep -ai --; } export -f fn; youtube-dl --get-id 'https://www.youtube.com/watch?v=6eq48cz0Skk&list=PLx6N3LVwgba0rcUWHxuD2ivRCgcLmKEjp'|pargs -1 fn |pargs mv -t . 
+#### use a youtube playlist to rename each file with 01, 02, 03... prefixes in order
+     fn () { find 2>/dev/null -type f -printf "$(pwd)/%P\n"|grep -ai --; } export -f fn; youtube-dl --get-id 'https://www.youtube.com/watch?v=6eq48cz0Skk&list=PLx6N3LVwgba0rcUWHxuD2ivRCgcLmKEjp'|pargs -1 fn |pargs tracknumber2.pl
+
 
 As mentioned above, pargs always operates like `xargs -d'\n'`. pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.
 
 Bugs: `pargs sudo customthing` (for functions and scripts in ~/bin) will not work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
 Blank lines are currently ignored.  Because most likely lists of "" "" "" is not what is desired.    
 `pargs echo '$variable'` will not work since $variable will be single quoted for the echo command.  You can use exported variables, but each exported variable you use will need to be used in a wrapper function or script, and not progammatically in the argument list for the command called by pargs.
+
 
