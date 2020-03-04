@@ -93,7 +93,8 @@ The script should work on any Linux with bash installed.
 >So actually pargs isn't exactly vital here, but we're using pargs to use a script written for `script arg1 arg2 arg2...` and pargs allows us to use the script without refactoring the script into a bash loop with `while read`. So it's a normal use case.
 
 #### FYI 
-* As mentioned above, pargs always operates like `xargs --delimiter='\n'`.    
+* As mentioned above, pargs always operates like `xargs --delimiter='\n'`.
+* pargs always gives the command an interactive tty, just like `xargs --open-tty`. 
 * pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.    
 * if standard input is nothing but empty data lines, pargs simply exits without error. xargs runs the exact same way if  called with `xargs --no-run-if-empty`.    
 * Blank lines are currently ignored.  Because empty arguments of "" "" "" is not what is desired.    
