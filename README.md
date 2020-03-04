@@ -22,7 +22,7 @@ The script should work on any Linux with bash installed.
     	pargs reads each line of STDIN as an argument to pass to COMMAND
     
     ( The first non-option is always read as the COMMAND then it's args )
-    pargs callsees COMMAND with the intial arguments, followed by the arguments 
+    pargs calls COMMAND with the intial arguments, followed by the arguments 
     from STDIN. 
     
     Here's a typical xargs example:
