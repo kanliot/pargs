@@ -1,4 +1,4 @@
-How to Pipe arguments to a bash script.
+seeHow to Pipe arguments to a bash script.
 ...or bash aliases or bash functions.# pargs
 How to Pipe arguments to a bash script.    
 ...or bash aliases or bash functions.
@@ -93,8 +93,11 @@ The script should work on any Linux with bash installed.
 >Nothing really to see here. You can replace the process substitution with `findXXX|mpv --playlist=-` and using `while read;do` in the above bash script would make the pargs call unnecessary.    
 >So actually pargs isn't exactly vital here, but we're using pargs to use a script written for `script arg1 arg2 arg2...` and pargs allows us to use the script without refactoring the script into a bash loop with `while read`. So it's a normal use case.
 
+As mentioned above, pargs always operates like `xargs --delimiter='\n'`.    
+pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.    
+pargs always skips running the command: like if xargs was called with `xargs --no-run-if-empty`.    
+xargs always stops command execution on error.  pargs works the same, but allows an option to ignore error: `-i` 
 
-As mentioned above, pargs always operates like `xargs --delimiter='\n'`. pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.  pargs always  skips running the command like if xargs was called with `xargs --no-run-if-empty`.  xargs always stops command execution on error.  pargs works the same, but allows an option to ignore error: `-i` 
 
 Bugs: `pargs sudo customthing` (for functions and scripts in ~/bin) will not work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
 Blank lines are currently ignored.  Because empty arguments of "" "" "" is not what is desired.    
