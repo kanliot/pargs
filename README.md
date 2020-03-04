@@ -1,4 +1,4 @@
-## pargs
+Nothing really to see here. You can replace the process substitution with findXXX|mpv --playlist=- and using while read;do in the above bash script would make the pargs call unnecessary.## pargs
 #### How to Pipe arguments to a bash script    ...or bash aliases or bash functions.
 
 
@@ -95,10 +95,10 @@ The script should work on any Linux with bash installed.
 #### FYI 
 * As mentioned above, pargs always operates like `xargs --delimiter='\n'`.
 * pargs always gives the command an interactive tty, just like `xargs --open-tty`. 
-* pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.    
 * if standard input is nothing but empty data lines, pargs simply exits without error. xargs runs the exact same way if  called with `xargs --no-run-if-empty`.    
 * Blank lines are currently ignored.  Because empty arguments of "" "" "" is not what is desired.    
 * xargs always stops command execution when the command encounters an error.  pargs works the same, but allows an option to ignore error: `-i`    
+* pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.    
 * `pargs echo '$variable'` will not work since pargs will single quote `$variable` for the echo command.  You can use exported **variables**, but each exported **variable** you use will need to be used in a wrapper function or script, and not progammatically in the argument list for the command called by pargs.
 
 
