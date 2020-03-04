@@ -75,7 +75,7 @@ The script should work on any Linux with bash installed.
      find expression # then select lines with mouse to put on Xwindows 'primary selection' 
      xclip -o|pargs trashcan.sh  # trascan.sh is something like trash-cli, just moves all dirs or files to a trash folder.
      xsel|xargs -d\\n mv -vt /mnt/good_trash/  # same as above but with GNU xargs, and xsel instead of xclip, and an ad hoc trash directory instead of the GNOME trash system
-#### select lines with mouse, put every line into an argument for arbitray command
+#### select lines with mouse, put every line into an argument for arbitrary command
      ~~(xclip outputs each line  selected with the mouse for use with your command)
      xclip -o|pargs something.sh
      xclip -o|xargs -d\\n something.sh  # don't need pargs if it's a normal command
