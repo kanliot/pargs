@@ -1,4 +1,4 @@
-Nothing really to see here. You can replace the process substitution with findXXX|mpv --playlist=- and using while read;do in the above bash script would make the pargs call unnecessary.## pargs
+## pargs
 #### How to Pipe arguments to a bash script    ...or bash aliases or bash functions.
 
 
