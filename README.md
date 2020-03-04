@@ -23,7 +23,7 @@ The script should work on any Linux with bash installed.
     	pargs reads each line of STDIN as an argument to pass to COMMAND
     
     ( The first non-option is always read as the COMMAND then it's args )
-    pargs calls COMMAND with the intial arguments, followed by the arguments 
+    pargs callsees COMMAND with the intial arguments, followed by the arguments 
     from STDIN. 
     
     Here's a typical xargs example:
@@ -95,12 +95,12 @@ The script should work on any Linux with bash installed.
 
 As mentioned above, pargs always operates like `xargs --delimiter='\n'`.    
 pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.    
-pargs always skips running the command: like if xargs was called with `xargs --no-run-if-empty`.    
-xargs always stops command execution on error.  pargs works the same, but allows an option to ignore error: `-i` 
+pargs always skips running the command given empty data lines: like if xargs was called with `xargs --no-run-if-empty`.    
+Blank lines are currently ignored.  Because empty arguments of "" "" "" is not what is desired.    
+xargs always stops command execution on error.  pargs works the same, but allows an option to ignore error: `-i`    
+`pargs echo '$variable'` will not work since $variable will be single quoted for the echo command.  You can use exported **variables**, but each exported **variable** you use will need to be used in a wrapper function or script, and not progammatically in the argument list for the command called by pargs.
 
 
 Bugs: `pargs sudo customthing` (for functions and scripts in ~/bin) will not work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
-Blank lines are currently ignored.  Because empty arguments of "" "" "" is not what is desired.    
-`pargs echo '$variable'` will not work since $variable will be single quoted for the echo command.  You can use exported **variables**, but each exported **variable** you use will need to be used in a wrapper function or script, and not progammatically in the argument list for the command called by pargs.
 
 
