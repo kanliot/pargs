@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+#this script is included as an example script for the `pargs` utility script
+
 #ok this script will get passed a bunch of full pathnames or non full-path filenames
 # it will rename each file like 01-filename, but in order of the file passed in arguments.
 
