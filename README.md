@@ -90,11 +90,11 @@ The script should work on any Linux with bash installed.
      function get_18 { youtube-dl -q -f18 --no-playlist -- "$@" 2>/dev/null ||echo unknown failure&true; }  # silent failure is a bug
 #### use find to match '.\*Waldge.\*.mp3', but pass to a bash function to select only files before a certain total duration.  This effects a sleep function for mpv.  The bash function simply calls mediainfo to get the time of a file in ms.  It keeps a running total of the seconds, but just prints each file in the argument list until the total exceeds the bash variable sleepyminutes
      export sleepyminutes=39; sleepy_accum () { (sleepyseconds=$((sleepyminutes * 60)); for a; do ss=`mediainfo --Inform='General;%Duration%' "$a"`; ((sleepy_a = sleepy_a +  (ss / 1000)));echo "$a"; if [[ "$sleepy_a" -gt "$sleepyseconds" ]]; then exit;fi;done;) }; export -f sleepy_accum; mpv --playlist=<(find -regex .*Waldge.*mp3 -printf "$PWD/%P\n" |pargs sleepy_accum)
-Nothing really to see here. You can replace the process substitution with `findXXX|mpv --playlist=-` and using `while read;do` in the above bash script would make the pargs call unnecessary.    
-So actually pargs isn't exactly vital here, but we're using pargs to use a script written for `script arg1 arg2 arg2...` and pargs allows us to use the script without refactoring the script into a bash loop with `while read`. So it's a normal use case.
+>Nothing really to see here. You can replace the process substitution with `findXXX|mpv --playlist=-` and using `while read;do` in the above bash script would make the pargs call unnecessary.    
+>So actually pargs isn't exactly vital here, but we're using pargs to use a script written for `script arg1 arg2 arg2...` and pargs allows us to use the script without refactoring the script into a bash loop with `while read`. So it's a normal use case.
 
 
-As mentioned above, pargs always operates like `xargs -d '\n'`. pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.
+As mentioned above, pargs always operates like `xargs --delimiter='\n'`. pargs doesn't calculate the maximum command length from the environment like xargs, but instead keeps it rather low.  pargs always  skips running the command like if xargs was called with `xargs --no-run-if-empty`.  xargs always stops command execution on error.  pargs works the same, but allows an option to ignore error: `-i` 
 
 Bugs: `pargs sudo customthing` (for functions and scripts in ~/bin) will not work since sudo needs normal commands, and doesn't use the $PATH for the user, but $PATH for root. Sudo should work inside scripts though.    
 Blank lines are currently ignored.  Because empty arguments of "" "" "" is not what is desired.    
