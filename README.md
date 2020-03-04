@@ -1,5 +1,4 @@
-## pargs
-#### How to Pipe arguments to a bash script    ...or bash aliases or bash functions.
+### pargs - How to Pipe arguments to a bash script    ...or bash aliases or bash functions.
 
 
 #### $ pargs
@@ -15,7 +14,7 @@ update our alias in `~/.bash_aliases`
 
 ##### Installation: 
 Install `pargs` by downloading the single script, making it executable and putting it in `~/bin`    
-The script should work on any Linux with bash installed.
+The script should work on any Linux with bash installed.  pargs works as a wrapper around bash, and works with any code you can run in bash.
 
 
     USAGE: pargs [options]... COMMAND [command options and arguments]... 
