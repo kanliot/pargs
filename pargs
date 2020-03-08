@@ -76,7 +76,18 @@ while () {
 		$syserr = $syserr >>8; # numeric error to bash error number
 		$!=$syserr;  #actually works donno why
 		#say STDERR "todo: maybe show how many bash invokations were successful?";
-		print( STDERR  "pwhat: process returned '$!'\n");
+		if ($syserr < 41) {  # probably bad practice to decode error, but i like seeing errors. errors above 41 are probably wrong
+			print( STDERR  "pwhat: process returned '$!'\n");
+		}
+		elsif ($syserr = 127) {
+			say STDERR "pargs: bash error $syserr";
+		}
+		elsif ($syserr = 126) {
+			say STDERR "pargs: bash error $syserr";
+		}
+		else {
+			say STDERR "pargs: process returned error $syserr";
+		}
 		exit $syserr;
 	}
 	exit unless defined $line; # subtle non-bug.  when STDIN was keyboard, ctrl-d wouldn't quite terminate input the first time.

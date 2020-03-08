@@ -71,6 +71,9 @@ The script should work on any Linux with bash installed.
      fn () { find 2>/dev/null -type f -printf "$(pwd)/%P\n"|grep -ai --; } export -f fn; youtube-dl --get-id 'https://www.youtube.com/watch?v=6eq48cz0Skk&list=PLx6N3LVwgba0rcUWHxuD2ivRCgcLmKEjp'|pargs -1 fn |pargs mv -t . 
 #### use a youtube playlist to rename each file with 01, 02, 03... prefixes in order
      fn () { find 2>/dev/null -type f -printf "$(pwd)/%P\n"|grep -ai --; } export -f fn; youtube-dl --get-id 'https://www.youtube.com/watch?v=6eq48cz0Skk&list=PLx6N3LVwgba0rcUWHxuD2ivRCgcLmKEjp'|pargs -1 fn |pargs tracknumber2.pl
+#### simple and useless example of interactive bash function. uses a bash built-in to show a menu that exits with control-c or EOF. 
+     simple() { select CMD in echo 'rm -iv' stat;do $CMD "$1";done;return 0; };export -f simple
+     find -mindepth 1|pargs -1 simple
 #### find + move to trash
      find expression # then select lines with mouse to put on Xwindows 'primary selection' 
      xclip -o|pargs trashcan.sh  # trascan.sh is something like trash-cli, just moves all dirs or files to a trash folder.
