@@ -92,6 +92,10 @@ The script should work on any Linux with bash installed.  pargs works as a wrapp
      export REGEX='face of disgrace'
      zinfo_re () { for a;do zipinfo -1 "$a" | grep -aiE "$REGEX">/dev/null&& echo "$a";done;true; } ;export -f zinfo_re
      find -iname '*.zip'| pargs zinfo_re
+#### same as above, but ignore error from 'grep' and use a single zipfile at a time.  The new search operation requires pargs to '-i' ignore error, and '-1' one arg per function call 
+     export REGEX='face of disgrace'
+     zinfo_re () { zipinfo -1 "$1" | grep -aiE "$REGEX" >/dev/null && echo "$1"; } ;export -f zinfo_re
+     find -iname '*.zip'|pargs -1i zinfo_re
 #### use pargs to shorten a bash script so that you don't need a bash for loop.   this script crops every image file losslessly with jpegtran
      crop_jpeg () { BN=`basename "$1"`; jpegtran -crop 1296x2096+32+24  "$1" > "crop_$BN"; };export -f crop_jpeg
      find .|pargs -1 crop_jpeg        # same as this wrapper:  for a in *; do crop_jpeg "$a";done
