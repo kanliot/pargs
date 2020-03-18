@@ -88,6 +88,13 @@ The script should work on any Linux with bash installed.  pargs works as a wrapp
      alias cl-args='xclip -o -selection clipboard|pargs'
      ( put below line into  ~/.bash_aliases so that pargs can call it, or export the bash function) 
      function get_18 { youtube-dl -q -f18 --no-playlist -- "$@" 2>/dev/null ||echo unknown failure&true; }  # silent failure is a bug
+#### use pargs to search through large number of zip files to find a filename that matches a regular expression. 
+     export REGEX='face of disgrace'
+     zinfo_re () { for a;do zipinfo -1 "$a" | grep -aiE "$REGEX">/dev/null&& echo "$a";done;true; } ;export -f zinfo_re
+     find -iname '*.zip'| pargs zinfo_re
+#### use pargs to shorten a bash script so that you don't need a bash for loop.   this script crops every image file losslessly with jpegtran
+     crop_jpeg () { BN=`basename "$1"`; jpegtran -crop 1296x2096+32+24  "$1" > "crop_$BN"; };export -f crop_jpeg
+     find .|pargs -1 crop_jpeg        # same as this wrapper:  for a in *; do crop_jpeg "$a";done
 #### use find to match '.\*Waldge.\*.mp3', but pass to a bash function to select only files before a certain total duration.  This effects a sleep function for mpv.  The bash function simply calls mediainfo to get the time of a file in ms.  It keeps a running total of the seconds, but just prints each file in the argument list until the total exceeds the bash variable sleepyminutes
      export sleepyminutes=39; sleepy_accum () { (sleepyseconds=$((sleepyminutes * 60)); for a; do ss=`mediainfo --Inform='General;%Duration%' "$a"`; ((sleepy_a = sleepy_a +  (ss / 1000)));echo "$a"; if [[ "$sleepy_a" -gt "$sleepyseconds" ]]; then exit;fi;done;) }; export -f sleepy_accum; mpv --playlist=<(find -regex .*Waldge.*mp3 -printf "$PWD/%P\n" |pargs sleepy_accum)
 >Nothing really to see here. You can replace the process substitution with `findXXX|mpv --playlist=-` and using `while read;do` in the above bash script would make the pargs call unnecessary.    

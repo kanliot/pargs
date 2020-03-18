@@ -27,6 +27,7 @@ my $ignore_err;  # program doesn't stop on error if not unset
 my @ARGUMENTS=@ARGV; # everything not an argument to this program
 
 
+help() if '-h' eq $ARGV[0]; # special case
 while ( my $first=shift @ARGUMENTS) {
 	# last means no more args to this program
 	last unless $first =~ /^(-[i1]{1,2}|--help)$/;  # should match -1 -i or -i1 but also matches -ii and -11 (accidental) 
