@@ -82,6 +82,11 @@ The script should work on any Linux with bash installed.  pargs works as a wrapp
      xclip -o|xargs -d\\n something.sh  # don't need pargs if it's a normal command
      alias selection-as-arguments='xclip -o|pargs'  # use same as above, easier to type
 
+#### use GNU locate to create a quick 'directories only' playlist.  Create a playlist of each path that matches the regular expression.
+     remove_non_dirs () { for a;do test -d "$a" && echo "$a";done;return 0;  };export -f remove_non_dirs # notice we never return an error.
+     mlocate -ir 'deadly.duo'|pargs remove_non_dirs  # preview the list
+     mlocate -ir 'deadly.duo'|pargs remove_non_dirs|mpv --playlist=-
+
 #### use xargs to pass a long url to a command so you don't have to single-quote it by hand.
      alias get_vid='xsel -b |xargs -d "\n"  youtube-dl -q -f 18 --no-playlist -- 2>/dev/null;echo xargs returns $?' 
      ( same thing in two parts with pargs ) 

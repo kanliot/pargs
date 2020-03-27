@@ -23,6 +23,8 @@ sub quoteforshell {  #adds single quotes i guess it could work like bash's print
       "'" . s/'/'\\''/gr . "'", @_;
 }
 
+our $progname='pargs';
+
 my $ignore_err;  # program doesn't stop on error if not unset
 my @ARGUMENTS=@ARGV; # everything not an argument to this program
 
@@ -78,16 +80,16 @@ while () {
 		$!=$syserr;  #actually works donno why
 		#say STDERR "todo: maybe show how many bash invokations were successful?";
 		if ($syserr < 41) {  # probably bad practice to decode error, but i like seeing errors. errors above 41 are probably wrong
-			print( STDERR  "pwhat: process returned '$!'\n");
+			print( STDERR  "$progname: process returned '$!'\n");
 		}
 		elsif ($syserr = 127) {
-			say STDERR "pargs: bash error $syserr";
+			say STDERR "$progname: bash error $syserr";
 		}
 		elsif ($syserr = 126) {
-			say STDERR "pargs: bash error $syserr";
+			say STDERR "$progname: bash error $syserr";
 		}
 		else {
-			say STDERR "pargs: process returned error $syserr";
+			say STDERR "$progname: process returned error $syserr";
 		}
 		exit $syserr;
 	}
