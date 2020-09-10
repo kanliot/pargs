@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # bargs copyright kanliot@github  2020 https://github.com/kanliot/pargs
-# this file should be SOURCED, or added to ~/.bash_aliases.   it won't see your bash functions unless you export them.
+# this file should be SOURCED, or added to ~/.bash_aliases. 
 
 
 
@@ -70,5 +70,3 @@ hash 2>/dev/null "$1" || alias "$1" 1>/dev/null 2>/dev/null || { echo >&2 bargs:
 _bargs ${opt_single:+-1} ${opt_ignore:+-i} "$@"
 unset opt_ignore opt_single
 }
-
-
