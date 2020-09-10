@@ -15,6 +15,8 @@ update our alias in `~/.bash_aliases`
 Install `pargs` by downloading the single script, making it executable and putting it in `~/bin`    
 The script should work on any Linux with bash installed.  pargs works as a wrapper around bash, and works with any code you can run in bash.
 
+##### bargs.sh is now available for people who don't want to export variables, functions, or add those functions to ~/.bashrc
+simply replace command like `$ pargs command < file` with $ . bargs.sh command < file`
 
     USAGE: pargs [options]... COMMAND [command options and arguments]... 
     	pargs reads each line of STDIN as an argument to pass to COMMAND
