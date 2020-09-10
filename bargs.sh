@@ -41,7 +41,7 @@ test "$1" = -i && { NOERROR=1;shift;}
 	then 0</dev/tty eval "$@" '"${arf[@]}"';
 	else 0</dev/tty eval "$@" '"${arf[@]}"'; 
 		last=$?;
-		test $last = 0 || { perl -E'say "bargs. command error:",$!=shift@ARGV';exit $last;}
+		test $last = 0 || { perl -E'say "bargs. command error: ",$!=shift@ARGV' $last;exit $last;}
 	fi
     done)
 }
