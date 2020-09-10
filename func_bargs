@@ -1,18 +1,8 @@
 #!/bin/bash
 
-# this file cannot be sourced in ~/.bashrc or ~/.bash_aliases use 'func_bargs' instead
-
-
-
-
 # bargs copyright kanliot@github  2020 https://github.com/kanliot/pargs
 # this file should be SOURCED, or added to ~/.bash_aliases.   it won't see your bash functions unless you export them.
-# you *CAN* use this as a xargs or pargs replacement, with normal commands (but not your functions and aliases), by running this as a command with bash.
 
-# uncomment for a failsafe.  this is BASH.  you can't use this to run zsh scripts. 
-#if [ $0 -ne /bin/bash ]; then
-#return
-#fi
 
 
 _bargs () 
@@ -82,4 +72,3 @@ unset opt_ignore opt_single
 }
 
 
-bargs "$@"
